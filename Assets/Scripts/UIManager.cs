@@ -1,4 +1,5 @@
 using Cysharp.Threading.Tasks;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -15,8 +16,10 @@ public class UIManager : MonoBehaviour
 	[SerializeField] private TCPClientChat socketClient;
 	[SerializeField] private NotifylSlider notiSlider;
 	[SerializeField] private Image fillAmount;
+	[SerializeField] private WaitingForPlayerRoom waitingForPlayerRoom;
 	public static UIManager instance;
 	public UnityAction OnLoaddingDone;
+	ServerService serverService=>ServerService.Instance;
 	private void Awake()
 	{
 		instance = this;
@@ -44,7 +47,20 @@ public class UIManager : MonoBehaviour
 	public void OnStartApp()
 	{
 		DisActiveOther(waitingUI);
+		serverService.SubscribeOperationHandler<ClientIdDto>(ServerToClientOperationCode.UpdatePlayerId, EnterRoom);
+
 	}
+
+	private void EnterRoom(ClientIdDto data)
+	{
+		MainThreadDispatcher.Instance.Enqueue(() =>
+		{
+			waitingForPlayerRoom.WaitingSlots[0].Init(socketClient.UserName);
+			waitingForPlayerRoom.WaitingSlots[0].IsAvaiable = false;
+		});
+		
+	}
+
 	public void OnConnected()
     {
 	    Debug.Log($"invoke on connect success");
@@ -71,7 +87,7 @@ public class UIManager : MonoBehaviour
 			await UniTask.WaitForSeconds(Time.deltaTime+0.1f);
 			if (fillAmount.fillAmount >= 1)
 			{
-				DisActiveOther(chatUI);
+				DisActiveOther(waitingForPlayerRoom.gameObject);
 				OnLoaddingDone?.Invoke();
 				ServerService.Instance.SendPublic($"{ServerService.Instance.GetClientName()} đã vào phòng chat",ClientToServerOperationCode.NotifyNewPlayer);
 				break;
@@ -86,6 +102,7 @@ public class UIManager : MonoBehaviour
 		listUI.Add(connectUI);
 		listUI.Add(connectFailUI);
 		listUI.Add(chatUI);
+		listUI.Add(waitingForPlayerRoom.gameObject);
 		foreach (var ui in listUI)
 		{
 			ui.SetActive(ui == go);
