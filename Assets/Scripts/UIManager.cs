@@ -96,6 +96,7 @@ public class UIManager : MonoBehaviour
 				{
 					Id = socketClient.clientID,
 					playerName = socketClient.UserName,
+					IsReady=false,
 					Position = new Vector3()
 				};
 				List<PlayerState> playerStates = new List<PlayerState>();

@@ -71,6 +71,7 @@ public struct PlayerState
 {
 	public string Id;
 	public string playerName;
+	public bool IsReady;
 	[JsonIgnore]
 	public Vector3 Position;
 }

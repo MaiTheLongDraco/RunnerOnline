@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,20 +12,31 @@ public class WaitingForPlayerRoom : MonoBehaviour
     [SerializeField] private Button startGameButton;
 	public Player playerPrefab;
 	[SerializeField] private PlayerManager playerMnTran;
+	[SerializeField] private NotifylSlider notifylSlider;
 
 	public List<WaitingSlot> WaitingSlots { get => waitingSlots; set => waitingSlots = value; }
-    public List<PlayerState> playerStates=> ClientManager.instance.playerStates;
+    public List<PlayerState> playerStates;
 	// Start is called before the first frame update
 	void Start()
     {
+		notifylSlider.gameObject.SetActive(false);
 		GetAllSlot();
         startGameButton.onClick.AddListener(OnStartButtonClick);
 	}
 
 	private void OnStartButtonClick()
 	{
+		var condition = waitingSlots.Any(slot => !slot.IsReady&&slot.IsAvaiable==false);
+        if (condition)
+        {
+			notifylSlider.Inject($" Có người chơi chưa sẵn sàng");
+			notifylSlider.gameObject.SetActive(true);
+
+			Debug.Log($" Có người chơi chưa sẵn sàng");
+			return;
+        }
 		this.gameObject.SetActive(false);
-        foreach (var playerState in waitingSlots) {
+		foreach (var playerState in waitingSlots) {
             if(!playerState.IsAvaiable)
             {
 				CreatePlayer(playerState);
@@ -73,6 +84,17 @@ public class WaitingForPlayerRoom : MonoBehaviour
 				slot.Init(data.playerName);
 				slot.slotId = data.Id;
                 slot.IsAvaiable = false;
+				slot.SetButtonText(data);
+				PlayerState playerState = new PlayerState() { 
+					Id = data.Id,
+					IsReady = data.IsReady,
+					playerName = data.playerName,
+					Position = data.Position
+				};
+				if(!playerStates.Contains(playerState) )
+				{
+					playerStates.Add(playerState);
+				}
 			}
 		});
 	}
