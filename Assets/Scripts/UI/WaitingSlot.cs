@@ -19,9 +19,16 @@ public class WaitingSlot : MonoBehaviour
 	public void Init(string slotName)
     {
         this.slotName = slotName;
+		IsAvaiable = false;
 		dislayText.text = slotName;
 		dislayText.gameObject.SetActive(true);
 		playerImage.gameObject.SetActive(true);
 
+	}
+	public void DisActive()
+	{
+		IsAvaiable = true;
+		dislayText.gameObject.SetActive(false);
+		playerImage.gameObject.SetActive(false);
 	}
 }

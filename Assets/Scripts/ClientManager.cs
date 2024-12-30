@@ -20,6 +20,18 @@ public class ClientManager : MonoBehaviour
 		tCPClientChat.OnConnectSuccess += OnConnect;
 		ListenCallBack();
 	}
+	public void AddPlayerState(PlayerState state)
+	{
+		if(playerStates.Contains(state)) return;
+		playerStates.Add(state);
+	}
+	public bool IsExistPlayer(string id)
+	{
+		foreach (PlayerState player in playerStates) {
+			if(player.Id.Equals(id)) return true;
+		}
+		return false;
+	}
 
 	private void OnConnect()
 	{
@@ -37,6 +49,7 @@ public class ClientManager : MonoBehaviour
 	private void ListenCallBack()
 	{
 		service.SubscribeOperationHandler<SyncAllPlayerDTO>(ServerToClientOperationCode.SyncAllPlayer, OnSyncAllPlayer);
+		//service.SubscribeOperationHandler<ClientIdDto>(ServerToClientOperationCode.UpdatePlayerId, OnGetPlayerId);
 	}
 	private void OnSyncAllPlayer(SyncAllPlayerDTO dto)
 	{
@@ -61,6 +74,7 @@ public class ClientManager : MonoBehaviour
 		
 	}
 }
+[Serializable]
 public struct PlayerState
 {
 	public string Id;

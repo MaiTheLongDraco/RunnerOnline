@@ -56,9 +56,9 @@ public class UIManager : MonoBehaviour
 	{
 		MainThreadDispatcher.Instance.Enqueue(() =>
 		{
-			waitingForPlayerRoom.WaitingSlots[0].Init(socketClient.UserName);
-			waitingForPlayerRoom.WaitingSlots[0].IsAvaiable = false;
-			waitingForPlayerRoom.WaitingSlots[0].slotId = socketClient.clientID;
+			//waitingForPlayerRoom.WaitingSlots[0].Init(socketClient.UserName);
+			//waitingForPlayerRoom.WaitingSlots[0].IsAvaiable = false;
+			//waitingForPlayerRoom.WaitingSlots[0].slotId = socketClient.clientID;
 		});
 		
 	}
