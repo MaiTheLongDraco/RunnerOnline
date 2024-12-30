@@ -26,7 +26,10 @@ public class TCPClientChat : MonoBehaviour
     private bool isConnected = false;
     public ServerService ServerService;
     [SerializeField]  public string clientID = ""; // ID được server gán
-
+    public bool IsClientConnect()
+    {
+        return clientSocket.Connected;
+    }
     private void Start()
     {
         ServerService.SubscribeOperationHandler<ClientIdDto>(ServerToClientOperationCode.UpdatePlayerId,UpdatePlayerID);
@@ -143,8 +146,21 @@ public class TCPClientChat : MonoBehaviour
 		Debug.Log($" send sync new player to server --- buffer lenght {buffer.Length}");
 		stream.Write(buffer, 0, buffer.Length);
 	}
+	public void SyncPlayerPos(PlayerInput playerInput, ClientToServerOperationCode messageType)
+	{
 
-    public void SendVoiceDataToServer(string targetId,byte[] byteVoice)
+		var protocolMessage = new ProtocolMessage<PlayerInput>
+		{
+			ProtocolType = (int)messageType,
+			Data = playerInput
+		};
+		string json = JsonConvert.SerializeObject(protocolMessage) + "\n";
+		byte[] buffer = Encoding.UTF8.GetBytes(json);
+		Debug.Log($" send sync player {playerInput.PlayerID} Pos {playerInput.Direction}  --- buffer lenght {buffer.Length}");
+		stream.Write(buffer, 0, buffer.Length);
+	}
+
+	public void SendVoiceDataToServer(string targetId,byte[] byteVoice)
     {
         if (!isConnected) return;
 

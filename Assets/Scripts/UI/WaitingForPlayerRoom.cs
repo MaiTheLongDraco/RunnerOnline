@@ -10,21 +10,38 @@ public class WaitingForPlayerRoom : MonoBehaviour
     [SerializeField]private List<WaitingSlot> waitingSlots;
     [SerializeField] private List<Sprite> playerIcon;
     [SerializeField] private Button startGameButton;
-	public List<WaitingSlot> WaitingSlots { get => waitingSlots; set => waitingSlots = value; }
+	public Player playerPrefab;
+	[SerializeField] private PlayerManager playerMnTran;
 
+	public List<WaitingSlot> WaitingSlots { get => waitingSlots; set => waitingSlots = value; }
+    public List<PlayerState> playerStates=> ClientManager.instance.playerStates;
 	// Start is called before the first frame update
 	void Start()
     {
-        GetAllSlot();
+		GetAllSlot();
         startGameButton.onClick.AddListener(OnStartButtonClick);
 	}
 
 	private void OnStartButtonClick()
 	{
 		this.gameObject.SetActive(false);
-        foreach (var slot in waitingSlots) {
-            slot.DisActive();
-        }
+        foreach (var playerState in waitingSlots) {
+            if(!playerState.IsAvaiable)
+            {
+				CreatePlayer(playerState);
+			}
+		}
+		foreach (var slot in waitingSlots)
+		{
+			slot.DisActive();
+		}
+	}
+	private void CreatePlayer(WaitingSlot state)
+	{
+			var player = Instantiate(playerPrefab, Vector3.zero, Quaternion.identity, playerMnTran.transform);
+			player.Init(state.slotId, state.slotName);
+        player.SetRender(state.playerImage.sprite);
+		playerMnTran.AddPlayer(player);
 	}
 
 	public void OnNotifyNewUser(NotifyNewPlayerDTO notifyNewPlayerDTO)

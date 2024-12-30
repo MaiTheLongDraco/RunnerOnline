@@ -28,6 +28,7 @@ public class WaitingSlot : MonoBehaviour
 	public void DisActive()
 	{
 		IsAvaiable = true;
+		dislayText.text = string.Empty;
 		dislayText.gameObject.SetActive(false);
 		playerImage.gameObject.SetActive(false);
 	}

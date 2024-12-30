@@ -11,7 +11,7 @@ public class ClientManager : MonoBehaviour
 	public TCPClientChat tCPClientChat;
 	public static ClientManager instance;
 	public List<PlayerState> playerStates = new List<PlayerState>();
-	public Player playerPrefab;
+	public bool IsClientConnect => tCPClientChat.IsClientConnect();
 	ServerService service=>ServerService.Instance;
 	private void Start()
 	{
@@ -48,31 +48,23 @@ public class ClientManager : MonoBehaviour
 
 	private void ListenCallBack()
 	{
-		service.SubscribeOperationHandler<SyncAllPlayerDTO>(ServerToClientOperationCode.SyncAllPlayer, OnSyncAllPlayer);
+		//service.SubscribeOperationHandler<SyncAllPlayerDTO>(ServerToClientOperationCode.SyncAllPlayer, OnSyncAllPlayer);
 		//service.SubscribeOperationHandler<ClientIdDto>(ServerToClientOperationCode.UpdatePlayerId, OnGetPlayerId);
 	}
-	private void OnSyncAllPlayer(SyncAllPlayerDTO dto)
-	{
-		playerStates = dto.AllPLayer;
-		StringBuilder sb = new StringBuilder();	
-		foreach (PlayerState player in playerStates) { 
-			sb.AppendLine($" Player ID {player.Id}");
-			if(player.Id!=tCPClientChat.clientID)
-			{
-				//CreatePlayer(player.Id, player.Position);
-			}
-		}
-		Debug.Log(sb.ToString());
-	}
-	private  void CreatePlayer(string id,Vector3 pos)
-	{
-		MainThreadDispatcher.Instance.Enqueue(() =>
-		{
-			var player = Instantiate(playerPrefab, pos, Quaternion.identity);
-			player.Id = id;
-		});
-		
-	}
+	//private void OnSyncAllPlayer(SyncAllPlayerDTO dto)
+	//{
+	//	playerStates = dto.AllPLayer;
+	//	StringBuilder sb = new StringBuilder();	
+	//	foreach (PlayerState player in playerStates) { 
+	//		sb.AppendLine($" Player ID {player.Id}");
+	//		if(player.Id!=tCPClientChat.clientID)
+	//		{
+	//			//CreatePlayer(player.Id, player.Position);
+	//		}
+	//	}
+	//	Debug.Log(sb.ToString());
+	//}
+	
 }
 [Serializable]
 public struct PlayerState

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json;
 
 public class ServerService : MonoBehaviour
 {
@@ -47,10 +48,12 @@ public class ServerService : MonoBehaviour
     public void SendSyncAllPlayer(SyncAllPlayerDTO syncAllPlayerDTO, ClientToServerOperationCode messageType)
     {
         m_TcpClientChat.SyncAllPlayerData(syncAllPlayerDTO, messageType);
-
 	}
-
-    public void SendPrivate(string targetID, string message)
+	public void SendUpdatePlayerPos(PlayerInput playerInput, ClientToServerOperationCode messageType)
+	{
+		m_TcpClientChat.SyncPlayerPos(playerInput, messageType);
+	}
+	public void SendPrivate(string targetID, string message)
     {
         m_TcpClientChat.SendMessageToSpecificClient(targetID,message);
     }
@@ -178,7 +181,8 @@ public enum ServerToClientOperationCode
     MessageReceived = 2,
     NotifyNewPlayer=3,
     AudioReceived=4,
-	SyncAllPlayer = 5
+	SyncAllPlayer = 5,
+	UpdatePlayerPos = 6,
 	// Thêm các operation code khác nếu cần
 }
 
@@ -190,7 +194,8 @@ public enum ClientToServerOperationCode
     SendPrivateMessage = 3,
     NotifyNewPlayer=4,
     SendAudio=5,
-	SyncAllPlayer = 6
+	SyncAllPlayer = 6,
+        UpdatePlayerPos=7,
 	// Thêm các operation code khác nếu cần
 }
 public struct PublicMessageDTO
@@ -237,7 +242,12 @@ public struct ClientIdDto
 {
     public string Id;
 }
-
+public struct PlayerInput
+{
+    public string PlayerID;
+	[JsonIgnore]
+	public Vector3 Direction;
+}
 public struct VoiceMessagePack
 {
     public string SenderId { get; set; }
