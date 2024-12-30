@@ -245,7 +245,6 @@ public struct ClientIdDto
 public struct PlayerInput
 {
     public string PlayerID;
-	[JsonIgnore]
 	public Vector3 Direction;
 }
 public struct VoiceMessagePack

@@ -29,7 +29,8 @@ public class PlayerMovement : MonoBehaviour
 			Debug.Log($"Get player input ID {data.PlayerID} Pos {data.Direction} currentId {id}");
 			if (data.PlayerID.Equals(id))
 			{
-				rb.velocity = targetPos;
+				Debug.Log($"PLayer {id} move");
+				rb.velocity = data.Direction;
 			}
 		});
 	

@@ -154,7 +154,11 @@ public class TCPClientChat : MonoBehaviour
 			ProtocolType = (int)messageType,
 			Data = playerInput
 		};
-		string json = JsonConvert.SerializeObject(protocolMessage) + "\n";
+		var settings = new JsonSerializerSettings
+		{
+			ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+		};
+		string json = JsonConvert.SerializeObject(protocolMessage, settings) + "\n";
 		byte[] buffer = Encoding.UTF8.GetBytes(json);
 		Debug.Log($" send sync player {playerInput.PlayerID} Pos {playerInput.Direction}  --- buffer lenght {buffer.Length}");
 		stream.Write(buffer, 0, buffer.Length);
