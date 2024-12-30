@@ -1,3 +1,4 @@
+using Newtonsoft.Json;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -22,7 +23,15 @@ public class ClientManager : MonoBehaviour
 
 	private void OnConnect()
 	{
-		service.SendSyncAllPlayer(new SyncAllPlayerDTO() { AllPLayer= new List<PlayerState>()},ClientToServerOperationCode.SyncAllPlayer);
+		//PlayerState player = new PlayerState()
+		//{
+		//	Id = tCPClientChat.clientID,
+		//	playerName = tCPClientChat.name,
+		//	Position = new Vector3()
+		//};
+		//List<PlayerState> playerStates = new List<PlayerState>();
+		//playerStates.Add(player);
+		//service.SendSyncAllPlayer(new SyncAllPlayerDTO() { AllPLayer = playerStates }, ClientToServerOperationCode.SyncAllPlayer);
 	}
 
 	private void ListenCallBack()
@@ -37,7 +46,7 @@ public class ClientManager : MonoBehaviour
 			sb.AppendLine($" Player ID {player.Id}");
 			if(player.Id!=tCPClientChat.clientID)
 			{
-				CreatePlayer(player.Id, player.Position);
+				//CreatePlayer(player.Id, player.Position);
 			}
 		}
 		Debug.Log(sb.ToString());
@@ -55,6 +64,8 @@ public class ClientManager : MonoBehaviour
 public struct PlayerState
 {
 	public string Id;
+	public string playerName;
+	[JsonIgnore]
 	public Vector3 Position;
 }
 public struct SyncAllPlayerDTO

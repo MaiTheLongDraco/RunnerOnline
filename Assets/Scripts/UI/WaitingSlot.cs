@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class WaitingSlot : MonoBehaviour
 {
     public string slotName;
+	public string slotId;
     public TextMeshProUGUI dislayText;
     public Image playerImage;
 	public bool IsAvaiable;

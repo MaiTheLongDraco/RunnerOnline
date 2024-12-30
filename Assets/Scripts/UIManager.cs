@@ -48,7 +48,8 @@ public class UIManager : MonoBehaviour
 	{
 		DisActiveOther(waitingUI);
 		serverService.SubscribeOperationHandler<ClientIdDto>(ServerToClientOperationCode.UpdatePlayerId, EnterRoom);
-
+		serverService.SubscribeOperationHandler<NotifyNewPlayerDTO>(ServerToClientOperationCode.NotifyNewPlayer, waitingForPlayerRoom.OnNotifyNewUser);
+		serverService.SubscribeOperationHandler<SyncAllPlayerDTO>(ServerToClientOperationCode.SyncAllPlayer, waitingForPlayerRoom.OnSyncAllPlayer);
 	}
 
 	private void EnterRoom(ClientIdDto data)
@@ -57,6 +58,7 @@ public class UIManager : MonoBehaviour
 		{
 			waitingForPlayerRoom.WaitingSlots[0].Init(socketClient.UserName);
 			waitingForPlayerRoom.WaitingSlots[0].IsAvaiable = false;
+			waitingForPlayerRoom.WaitingSlots[0].slotId = socketClient.clientID;
 		});
 		
 	}
@@ -90,6 +92,15 @@ public class UIManager : MonoBehaviour
 				DisActiveOther(waitingForPlayerRoom.gameObject);
 				OnLoaddingDone?.Invoke();
 				ServerService.Instance.SendPublic($"{ServerService.Instance.GetClientName()} đã vào phòng chat",ClientToServerOperationCode.NotifyNewPlayer);
+				PlayerState player = new PlayerState()
+				{
+					Id = socketClient.clientID,
+					playerName = socketClient.UserName,
+					Position = new Vector3()
+				};
+				List<PlayerState> playerStates = new List<PlayerState>();
+				playerStates.Add(player);
+				serverService.SendSyncAllPlayer(new SyncAllPlayerDTO() { AllPLayer = playerStates }, ClientToServerOperationCode.SyncAllPlayer);
 				break;
 			}
 		}
