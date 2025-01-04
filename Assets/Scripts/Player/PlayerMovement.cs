@@ -30,7 +30,7 @@ public class PlayerMovement : MonoBehaviour
 			if (data.PlayerID.Equals(id))
 			{
 				Debug.Log($"PLayer {id} move");
-				rb.velocity = data.Direction;
+				transform.position += data.Direction;
 			}
 		});
 	
@@ -47,16 +47,27 @@ public class PlayerMovement : MonoBehaviour
 			{
 				lastTime += _interval;
 				Debug.Log($"Move {moveX}");
-				if(moveX==0)return;
-				//rb.velocity += new Vector2(moveX, moveZ) * moveSpeed * Time.deltaTime;
-				targetPos+= new Vector3(moveX, moveZ,0) * moveSpeed * Time.deltaTime;
-				PlayerInput playerInput = new PlayerInput() { 
-					PlayerID = id,
-					Direction=targetPos
-				};
-				service.SendUpdatePlayerPos(playerInput, ClientToServerOperationCode.UpdatePlayerPos);
+				if (moveX > 0)
+				{
+					PlayerInput playerInput = new PlayerInput()
+					{
+						PlayerID = id,
+						Direction = Vector3.right/10,
+					};
+					service.SendUpdatePlayerPos(playerInput, ClientToServerOperationCode.UpdatePlayerPos);
+				}else if(moveX < 0)
+				{
+					PlayerInput playerInput = new PlayerInput()
+					{
+						PlayerID = id,
+						Direction = Vector3.left/10,
+					};
+					service.SendUpdatePlayerPos(playerInput, ClientToServerOperationCode.UpdatePlayerPos);
+				}
+			}
+				
 			}
 		}
 		
 	}
-}
+
